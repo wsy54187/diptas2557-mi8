@@ -1,0 +1,21 @@
+目的：
+  只验证 diptas2557 0.1.12 是否能让 TAS2557 进入“已上电但仍静音”的安全状态。
+
+禁止：
+  不播放测试音。
+  不执行 SafeUnmute。
+  不改 qcauddev/qcaudminiport。
+  不绑定 tas2557_amp。
+
+执行条件：
+  仅在 0.1.12 已安装并确认系统稳定后执行。
+
+命令：
+  powershell -ExecutionPolicy Bypass -File C:\Users\Admin\Desktop\mi8-tas2557-0.1.12-source\scripts\run-safe-startup-muted-012.ps1
+
+完成后返回：
+  脚本输出的 Safe-startup muted log 路径。
+  重点读取：
+    status-after-validate-firmware.txt
+    status-after-safe-startup-muted.txt
+    status-final-safe.txt
