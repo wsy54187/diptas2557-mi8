@@ -1,0 +1,50 @@
+name: build diptas2557
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - 'codex/**'
+    paths:
+      - '.github/workflows/build-driver.yml'
+      - 'acpi/**'
+      - 'package/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'diptas2557.sln'
+      - 'diptas2557.vcxproj'
+      - 'diptas2557.vcxproj.filters'
+
+jobs:
+  build-arm64:
+    runs-on: windows-2022
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install WDK toolchain
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          winget --version
+          winget configure -f 'https://raw.githubusercontent.com/microsoft/Windows-driver-samples/main/_wdk_utils/winget/configs/wdk-vscommunity.dsc.yaml' --accept-configuration-agreements --disable-interactivity
+
+      - name: Build and package ARM64 driver
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          powershell -ExecutionPolicy Bypass -File .\scripts\ci-build-driver-package.ps1
+
+      - name: Upload driver package
+        uses: actions/upload-artifact@v4
+        with:
+          name: diptas2557-arm64-testsigned
+          path: |
+            build/package/ARM64/**
+            build/Release/ARM64/diptas2557.pdb
+            build/ci/**
+          if-no-files-found: error
