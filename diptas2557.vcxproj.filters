@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{dd9fbd98-dabf-4db3-a4e7-bb6bdf39965d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5550125e-8813-4cd6-8cf8-575bc6c25547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Package">
+      <UniqueIdentifier>{1f059ddc-30ce-4b15-a577-b49e89efc09d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Device.c"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Driver.c"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Gpio.c"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Spb.c"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Tas2557.c"><Filter>Source Files</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Driver.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="src\Public.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="src\Tas2557.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="package\diptas2557.inf"><Filter>Package</Filter></None>
+    <None Include="acpi\dipper-tas2557-sample.asl"><Filter>Package</Filter></None>
+  </ItemGroup>
+</Project>
