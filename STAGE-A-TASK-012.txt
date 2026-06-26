@@ -1,0 +1,24 @@
+目的：
+  安装并绑定 GitHub Actions 产出的 diptas2557 0.1.12 ARM64 测试签名包。
+
+前提：
+  已从 GitHub artifact 解压出：
+    diptas2557.inf
+    diptas2557.sys
+    diptas2557.cat
+    diptas2557.cer
+  手机当前已经恢复 TAS 安全基线。
+
+禁止：
+  不绑定 tas2557_amp。
+  不执行 Stage C。
+  不播放测试音。
+  不运行 SafeStartup / SafeUnmute。
+
+命令示例：
+  powershell -ExecutionPolicy Bypass -File C:\Users\Admin\Desktop\mi8-tas2557-0.1.12-source\scripts\install-012-bind-only.ps1 -PackageDir C:\Users\Admin\Desktop\diptas2557-arm64-testsigned\build\package\ARM64
+
+完成后返回：
+  脚本输出的 Backup 路径。
+  drivers-after.txt
+  status-after.txt
