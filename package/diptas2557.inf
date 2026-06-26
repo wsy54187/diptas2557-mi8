@@ -1,0 +1,69 @@
+; diptas2557.inf - experimental Xiaomi Mi 8 TAS2557 amp driver
+; This INF is a draft. It must be test-signed with the built driver package.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=MEDIA
+ClassGuid={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+DriverVer=06/26/2026,0.1.12.0
+CatalogFile=diptas2557.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir=13
+
+[SourceDisksNames]
+1=%DiskName%,,,
+
+[SourceDisksFiles]
+diptas2557.sys=1
+
+[Manufacturer]
+%MfgName%=Models,NTarm64
+
+[Models.NTarm64]
+%DeviceDesc%=Install,ACPI\DIPT2557
+%DeviceDesc%=Install,ACPI\TTAS2557
+
+[Install.NT]
+CopyFiles=DriverCopy
+AddReg=Install.AddReg
+
+[Install.NT.HW]
+AddReg=Install.AddReg
+
+[DriverCopy]
+diptas2557.sys
+
+[Install.NT.Services]
+AddService=diptas2557,0x00000002,ServiceInstall
+
+[ServiceInstall]
+DisplayName=%ServiceName%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%13%\diptas2557.sys
+
+[Install.AddReg]
+HKR,,"AllowI2cProbe",0x00010001,0
+HKR,,"AllowResetProbe",0x00010001,0
+HKR,,"AllowSoftwareResetProbe",0x00010001,0
+HKR,,"AllowSplitReadProbe",0x00010001,0
+HKR,,"AllowRawReadProbe",0x00010001,0
+HKR,,"AllowSpeakerPowerUp",0x00010001,0
+HKR,,"AllowI2cWrites",0x00010001,0
+
+[Install.NT.Wdf]
+KmdfService=diptas2557,KmdfLibrary
+
+[KmdfLibrary]
+KmdfLibraryVersion=1.15
+
+[Strings]
+ProviderName="Codex experimental"
+MfgName="Xiaomi Mi 8 WoA experimental"
+DeviceDesc="Xiaomi Mi 8 TAS2557 Smart Amplifier (safe probe mode)"
+ServiceName="diptas2557"
+DiskName="diptas2557 Installation Disk"
