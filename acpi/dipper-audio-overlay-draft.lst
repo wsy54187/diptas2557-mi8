@@ -1,0 +1,177 @@
+
+Intel ACPI Component Architecture
+ASL+ Optimizing Compiler/Disassembler version 20260408 (32-bit version)
+Copyright (c) 2000 - 2026 Intel Corporation
+
+Compilation of "work/dipper-tas2557-driver/acpi/dipper-audio-overlay-draft.asl"
+       1:  /*
+       2:   * Draft only. Do not install as-is.
+       3:   *
+       4:   * This fragment is based on:
+       5:   * - current Xiaomi Mi 8 Windows DSDT strings
+       6:   * - Linux dipper TAS2557 hardware data
+       7:   * - sunflower2333/tas2557_win ACPI sample
+       8:   *
+       9:   * Current DSDT has:
+      10:   * - \_SB.I2C6
+      11:   * - \_SB.GIO0
+      12:   * - \_SB.ADSP.SLM1.ADCM.AUDD string path
+      13:   *
+      14:   * Linux dipper DTS also names reset GPIO 76 and speaker-id GPIO 27.
+      15:   * This first overlay draft exposes only the I2C target and IRQ, so it cannot
+      16:   * accidentally toggle reset or speaker-id GPIOs during enumeration.
+      17:   *
+      18:   * Current DSDT does NOT have:
+      19:   * - AFLT0001
+      20:   * - TTAS2557
+      21:   */
+      23:  DefinitionBlock ("", "SSDT", 2, "DIPPER", "TAS2557", 0x00000001)
+
+00000000:  53 53 44 54 43 01 00 00     "SSDTC..."
+00000008:  02 CA 44 49 50 50 45 52     "..DIPPER"
+00000010:  54 41 53 32 35 35 37 00     "TAS2557."
+00000018:  01 00 00 00 49 4E 54 4C     "....INTL"
+00000020:  08 04 26 20 ............    "..& "
+00000024:  A0 44 04 00 ............    ".D.."
+00000028:  15 5C 2E 5F 53 42 5F 47     ".\._SB_G"
+00000030:  49 4F 30 06 00 .........    "IO0.."
+00000035:  15 5C 2E 5F 53 42 5F 49     ".\._SB_I"
+0000003D:  32 43 36 06 00 .........    "2C6.."
+00000042:  15 5C 2E 5F 53 42 5F 50     ".\._SB_P"
+0000004A:  53 55 42 06 00 .........    "SUB.."
+0000004F:  15 5C 2F 05 5F 53 42 5F     ".\/._SB_"
+00000057:  41 44 53 50 53 4C 4D 31     "ADSPSLM1"
+0000005F:  41 44 43 4D 41 55 44 44     "ADCMAUDD"
+00000067:  06 00 ..................    ".."
+
+      24:  {
+      25:      External (\_SB.GIO0, DeviceObj)
+      26:      External (\_SB.I2C6, DeviceObj)
+      27:      External (\_SB.PSUB, DeviceObj)
+      28:      External (\_SB.ADSP.SLM1.ADCM.AUDD, DeviceObj)
+      30:      Scope (\_SB)
+
+00000069:  10 49 0D 5C 5F 53 42 5F     ".I.\_SB_"
+
+      31:      {
+      32:          Device (AFT1)
+
+00000071:  5B 82 39 41 46 54 31 ...    "[.9AFT1"
+
+      33:          {
+      34:              Name (_HID, "AFLT0001")
+
+00000078:  08 5F 48 49 44 0D 41 46     "._HID.AF"
+00000080:  4C 54 30 30 30 31 00 ...    "LT0001."
+
+      35:              Name (_UID, Zero)
+
+00000087:  08 5F 55 49 44 00 ......    "._UID."
+
+      36:              Name (_DEP, Package ()
+      37:              {
+      38:                  \_SB.ADSP.SLM1.ADCM.AUDD
+      39:              })
+
+0000008D:  08 5F 44 45 50 .........    "._DEP"
+00000092:  12 19 01 5C 2F 05 5F 53     "...\/._S"
+0000009A:  42 5F 41 44 53 50 53 4C     "B_ADSPSL"
+000000A2:  4D 31 41 44 43 4D 41 55     "M1ADCMAU"
+000000AA:  44 44 ..................    "DD"
+
+      40:          }
+      42:          Device (SPK1)
+
+000000AC:  5B 82 45 09 53 50 4B 31     "[.E.SPK1"
+
+      43:          {
+      44:              Name (_HID, "TTAS2557")
+
+000000B4:  08 5F 48 49 44 0D 54 54     "._HID.TT"
+000000BC:  41 53 32 35 35 37 00 ...    "AS2557."
+
+      45:              Name (_UID, Zero)
+
+000000C3:  08 5F 55 49 44 00 ......    "._UID."
+
+      46:              Alias (\_SB.PSUB, _SUB)
+
+000000C9:  06 5C 2E 5F 53 42 5F 50     ".\._SB_P"
+000000D1:  53 55 42 5F 53 55 42 ...    "SUB_SUB"
+
+      47:              Name (_DEP, Package ()
+      48:              {
+      49:                  \_SB.GIO0,
+      50:                  \_SB.I2C6
+      51:              })
+
+000000D8:  08 5F 44 45 50 .........    "._DEP"
+000000DD:  12 16 02 5C 2E 5F 53 42     "...\._SB"
+000000E5:  5F 47 49 4F 30 5C 2E 5F     "_GIO0\._"
+000000ED:  53 42 5F 49 32 43 36 ...    "SB_I2C6"
+
+      53:              Method (_CRS, 0, Serialized)
+
+000000F4:  14 4E 04 5F 43 52 53 08     ".N._CRS."
+
+      54:              {
+      55:                  Return (ResourceTemplate ()
+
+000000FC:  A4 11 45 04 0A 41 ......    "..E..A"
+
+      56:                  {
+      57:                      I2cSerialBusV2 (
+      58:                          0x004C,
+      59:                          ControllerInitiated,
+      60:                          400000,
+      61:                          AddressingMode7Bit,
+      62:                          "\\_SB.I2C6",
+      63:                          0x00,
+      64:                          ResourceConsumer,
+      65:                          ,
+      66:                          Exclusive,
+      67:                      )
+
+00000102:  8E 19 00 02 00 01 02 00     "........"
+0000010A:  00 01 06 00 80 1A 06 00     "........"
+00000112:  4C 00 5C 5F 53 42 2E 49     "L.\_SB.I"
+0000011A:  32 43 36 00 ............    "2C6."
+
+      69:                      GpioInt (
+      70:                          Level,
+      71:                          ActiveHigh,
+      72:                          Exclusive,
+      73:                          PullDown,
+      74:                          0,
+      75:                          "\\_SB.GIO0",
+      76:                          0,
+      77:                          ResourceConsumer,
+      78:                          ,
+      79:                      )
+      80:                      { 30 }
+
+0000011E:  8C 20 00 01 00 01 00 00     ". ......"
+00000126:  00 02 00 00 00 00 17 00     "........"
+0000012E:  00 19 00 23 00 00 00 1E     "...#...."
+00000136:  00 5C 5F 53 42 2E 47 49     ".\_SB.GI"
+0000013E:  4F 30 00 ...............    "O0."
+00000141:  79 00 ..................    "y."
+      81:                  })
+      82:              }
+      83:          }
+      84:      }
+      85:  }
+
+
+
+Summary of errors and warnings
+
+
+ASL+ Optimizing Compiler/Disassembler version 20260408 [Apr  8 2026]
+
+ASL Input:     work/dipper-tas2557-driver/acpi/dipper-audio-overlay-draft.asl -    2227 bytes     12 keywords      0 source lines
+AML Output:    work/dipper-tas2557-driver/acpi/dipper-audio-overlay-draft.aml -     323 bytes      1 opcodes      11 named objects
+Listing File:  work/dipper-tas2557-driver/acpi/dipper-audio-overlay-draft.lst -    6242 bytes
+
+Compilation successful. 0 Errors, 0 Warnings, 0 Remarks, 1 Optimizations
+
