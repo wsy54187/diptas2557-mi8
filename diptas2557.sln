@@ -1,0 +1,18 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 12.0.21005.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diptas2557", "diptas2557.vcxproj", "{7BD627D8-8C8A-40FD-91B1-134A8C5661C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM64 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BD627D8-8C8A-40FD-91B1-134A8C5661C8}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{7BD627D8-8C8A-40FD-91B1-134A8C5661C8}.Debug|ARM64.Build.0 = Debug|ARM64
+		{7BD627D8-8C8A-40FD-91B1-134A8C5661C8}.Release|ARM64.ActiveCfg = Release|ARM64
+		{7BD627D8-8C8A-40FD-91B1-134A8C5661C8}.Release|ARM64.Build.0 = Release|ARM64
+	EndGlobalSection
+EndGlobal
