@@ -30,8 +30,35 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          winget --version
-          winget configure -f 'https://raw.githubusercontent.com/microsoft/Windows-driver-samples/main/_wdk_utils/winget/configs/wdk-vscommunity.dsc.yaml' --accept-configuration-agreements --disable-interactivity
+
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (-not (Test-Path -LiteralPath $vswhere)) {
+            throw "vswhere.exe not found; the GitHub runner does not have Visual Studio Build Tools installed."
+          }
+
+          $vsInstall = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.ARM64 -property installationPath
+          if (-not $vsInstall) {
+            throw "Visual Studio ARM64 C++ tools were not found on the runner."
+          }
+          "Visual Studio: $vsInstall"
+
+          $sdkRoot = "${env:ProgramFiles(x86)}\Windows Kits\10"
+          $hasWdkTargets = Test-Path -LiteralPath (Join-Path $sdkRoot 'build\WindowsDriver.common.targets')
+          $hasInf2Cat = Get-ChildItem -LiteralPath (Join-Path $sdkRoot 'bin') -Recurse -Filter inf2cat.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+
+          if (-not ($hasWdkTargets -and $hasInf2Cat)) {
+            $installer = Join-Path $env:TEMP 'wdksetup-26100.exe'
+            Invoke-WebRequest -Uri 'https://go.microsoft.com/fwlink/?linkid=2335869' -OutFile $installer
+            $proc = Start-Process -FilePath $installer -ArgumentList @('/quiet','/norestart','/features','OptionId.WindowsDriverKitComplete') -Wait -PassThru
+            if ($proc.ExitCode -ne 0 -and $proc.ExitCode -ne 3010) {
+              throw "WDK installer failed with exit code $($proc.ExitCode)"
+            }
+          }
+
+          Get-ChildItem -LiteralPath "${env:ProgramFiles(x86)}\Windows Kits\10\Include" -Directory -ErrorAction SilentlyContinue |
+            Select-Object -ExpandProperty FullName
+          Get-ChildItem -LiteralPath "${env:ProgramFiles(x86)}\Windows Kits\10\build" -ErrorAction SilentlyContinue |
+            Select-Object -ExpandProperty FullName
 
       - name: Build and package ARM64 driver
         shell: pwsh
