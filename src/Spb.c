@@ -30,11 +30,13 @@ SpbInitialize(
 
     WDF_OBJECT_ATTRIBUTES_INIT(&targetAttributes);
     status = WdfIoTargetCreate(Device, &targetAttributes, &Spb->IoTarget);
+    Spb->CreateStatus = status;
     if (!NT_SUCCESS(status)) {
         return status;
     }
 
     status = WdfWaitLockCreate(WDF_NO_OBJECT_ATTRIBUTES, &Spb->Lock);
+    Spb->LockStatus = status;
     if (!NT_SUCCESS(status)) {
         SpbDeinitialize(Spb);
         return status;
@@ -50,6 +52,7 @@ SpbInitialize(
     openParams.FileAttributes = FILE_ATTRIBUTE_NORMAL;
 
     status = WdfIoTargetOpen(Spb->IoTarget, &openParams);
+    Spb->OpenStatus = status;
     if (!NT_SUCCESS(status)) {
         SpbDeinitialize(Spb);
         return status;

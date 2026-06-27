@@ -30,11 +30,13 @@ GpioInitialize(
 
     WDF_OBJECT_ATTRIBUTES_INIT(&targetAttributes);
     status = WdfIoTargetCreate(Device, &targetAttributes, &Gpio->IoTarget);
+    Gpio->CreateStatus = status;
     if (!NT_SUCCESS(status)) {
         return status;
     }
 
     status = WdfWaitLockCreate(WDF_NO_OBJECT_ATTRIBUTES, &Gpio->Lock);
+    Gpio->LockStatus = status;
     if (!NT_SUCCESS(status)) {
         GpioDeinitialize(Gpio);
         return status;
@@ -50,6 +52,7 @@ GpioInitialize(
     openParams.FileAttributes = FILE_ATTRIBUTE_NORMAL;
 
     status = WdfIoTargetOpen(Gpio->IoTarget, &openParams);
+    Gpio->OpenStatus = status;
     if (!NT_SUCCESS(status)) {
         GpioDeinitialize(Gpio);
         return status;

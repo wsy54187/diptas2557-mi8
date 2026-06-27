@@ -16,6 +16,9 @@ typedef struct _SPB_CONTEXT {
     WDFIOTARGET IoTarget;
     WDFWAITLOCK Lock;
     LARGE_INTEGER ConnectionId;
+    NTSTATUS CreateStatus;
+    NTSTATUS LockStatus;
+    NTSTATUS OpenStatus;
     BOOLEAN Ready;
 } SPB_CONTEXT, *PSPB_CONTEXT;
 
@@ -23,6 +26,9 @@ typedef struct _GPIO_CONTEXT {
     WDFIOTARGET IoTarget;
     WDFWAITLOCK Lock;
     LARGE_INTEGER ConnectionId;
+    NTSTATUS CreateStatus;
+    NTSTATUS LockStatus;
+    NTSTATUS OpenStatus;
     BOOLEAN Ready;
 } GPIO_CONTEXT, *PGPIO_CONTEXT;
 
@@ -53,6 +59,16 @@ typedef struct _DEVICE_CONTEXT {
     NTSTATUS LastShutdownStatus;
     NTSTATUS LastSafeStartupStatus;
     NTSTATUS LastSafeUnmuteStatus;
+    NTSTATUS LastPrepareHardwareStatus;
+    NTSTATUS LastSpbInitializeStatus;
+    NTSTATUS LastGpioInitializeStatus;
+    ULONG TranslatedResourceCount;
+    ULONG I2cResourceCount;
+    ULONG GpioResourceCount;
+    ULONG LastI2cConnectionIdLow;
+    ULONG LastI2cConnectionIdHigh;
+    ULONG LastGpioConnectionIdLow;
+    ULONG LastGpioConnectionIdHigh;
     BOOLEAN AllowI2cProbe;
     BOOLEAN AllowResetProbe;
     BOOLEAN AllowSoftwareResetProbe;

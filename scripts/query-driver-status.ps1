@@ -78,7 +78,7 @@ if ($handle -eq [NativeIo]::INVALID_HANDLE_VALUE) {
 }
 
 try {
-    $out = New-Object byte[] 128
+    $out = New-Object byte[] 192
     [uint32]$bytes = 0
     $ok = [NativeIo]::DeviceIoControl($handle, [uint32]$ioctlGetStatus, [IntPtr]::Zero, 0, $out, [uint32]$out.Length, [ref]$bytes, [IntPtr]::Zero)
     if (-not $ok) {
@@ -130,6 +130,26 @@ try {
                     $status.LastShutdownStatus = ('0x{0:X8}' -f (Get-U32 $out 92))
                     $status.LastSafeStartupStatus = ('0x{0:X8}' -f (Get-U32 $out 96))
                     $status.LastSafeUnmuteStatus = ('0x{0:X8}' -f (Get-U32 $out 100))
+                    if ($bytes -ge 176) {
+                        $status.LastPrepareHardwareStatus = ('0x{0:X8}' -f (Get-U32 $out 104))
+                        $status.LastSpbInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out 108))
+                        $status.LastGpioInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out 112))
+                        $status.TranslatedResourceCount = Get-U32 $out 116
+                        $status.I2cResourceCount = Get-U32 $out 120
+                        $status.GpioResourceCount = Get-U32 $out 124
+                        $status.LastI2cConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out 128))
+                        $status.LastI2cConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out 132))
+                        $status.LastGpioConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out 136))
+                        $status.LastGpioConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out 140))
+                        $status.SpbCreateStatus = ('0x{0:X8}' -f (Get-U32 $out 144))
+                        $status.SpbLockStatus = ('0x{0:X8}' -f (Get-U32 $out 148))
+                        $status.SpbOpenStatus = ('0x{0:X8}' -f (Get-U32 $out 152))
+                        $status.GpioCreateStatus = ('0x{0:X8}' -f (Get-U32 $out 156))
+                        $status.GpioLockStatus = ('0x{0:X8}' -f (Get-U32 $out 160))
+                        $status.GpioOpenStatus = ('0x{0:X8}' -f (Get-U32 $out 164))
+                        $status.SpbReady = [bool](Get-U32 $out 168)
+                        $status.GpioReady = [bool](Get-U32 $out 172)
+                    }
                 }
             }
         }

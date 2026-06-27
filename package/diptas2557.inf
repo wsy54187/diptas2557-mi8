@@ -6,7 +6,7 @@ Signature="$WINDOWS NT$"
 Class=MEDIA
 ClassGuid={4d36e96c-e325-11ce-bfc1-08002be10318}
 Provider=%ProviderName%
-DriverVer=06/26/2026,0.1.12.0
+DriverVer=06/27/2026,0.1.13.0
 CatalogFile=diptas2557.cat
 PnpLockdown=1
 

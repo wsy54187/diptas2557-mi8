@@ -71,6 +71,16 @@ Diptas2557EvtPrepareHardware(
     UNREFERENCED_PARAMETER(ResourcesRaw);
 
     Diptas2557ReadSafetyGates(Device, context);
+    context->TranslatedResourceCount = WdfCmResourceListGetCount(ResourcesTranslated);
+    context->I2cResourceCount = 0;
+    context->GpioResourceCount = 0;
+    context->LastI2cConnectionIdLow = 0;
+    context->LastI2cConnectionIdHigh = 0;
+    context->LastGpioConnectionIdLow = 0;
+    context->LastGpioConnectionIdHigh = 0;
+    context->LastSpbInitializeStatus = STATUS_NOT_FOUND;
+    context->LastGpioInitializeStatus = STATUS_NOT_FOUND;
+    context->LastPrepareHardwareStatus = STATUS_DEVICE_CONFIGURATION_ERROR;
 
     for (i = 0; i < WdfCmResourceListGetCount(ResourcesTranslated); i++) {
         PCM_PARTIAL_RESOURCE_DESCRIPTOR resource = WdfCmResourceListGetDescriptor(ResourcesTranslated, i);
@@ -81,24 +91,34 @@ Diptas2557EvtPrepareHardware(
         if (resource->Type == CmResourceTypeConnection &&
             resource->u.Connection.Class == CM_RESOURCE_CONNECTION_CLASS_SERIAL &&
             resource->u.Connection.Type == CM_RESOURCE_CONNECTION_TYPE_SERIAL_I2C) {
+            context->I2cResourceCount++;
             i2cResource = resource;
+            context->LastI2cConnectionIdLow = resource->u.Connection.IdLowPart;
+            context->LastI2cConnectionIdHigh = resource->u.Connection.IdHighPart;
         } else if (resource->Type == CmResourceTypeConnection &&
             resource->u.Connection.Class == CM_RESOURCE_CONNECTION_CLASS_GPIO &&
             resource->u.Connection.Type == CM_RESOURCE_CONNECTION_TYPE_GPIO_IO) {
+            context->GpioResourceCount++;
             gpioResource = resource;
+            context->LastGpioConnectionIdLow = resource->u.Connection.IdLowPart;
+            context->LastGpioConnectionIdHigh = resource->u.Connection.IdHighPart;
         }
     }
 
     if (gpioResource != NULL) {
         context->LastResetStatus = GpioInitialize(Device, &context->ResetGpio, gpioResource);
+        context->LastGpioInitializeStatus = context->LastResetStatus;
     } else {
         context->LastResetStatus = STATUS_NOT_FOUND;
+        context->LastGpioInitializeStatus = STATUS_NOT_FOUND;
     }
 
     if (i2cResource != NULL) {
         status = SpbInitialize(Device, &context->Spb, i2cResource);
+        context->LastSpbInitializeStatus = status;
     }
 
+    context->LastPrepareHardwareStatus = status;
     return status;
 }
 
@@ -307,6 +327,24 @@ Diptas2557EvtIoDeviceControl(
                 output->LastShutdownStatus = (ULONG)context->LastShutdownStatus;
                 output->LastSafeStartupStatus = (ULONG)context->LastSafeStartupStatus;
                 output->LastSafeUnmuteStatus = (ULONG)context->LastSafeUnmuteStatus;
+                output->LastPrepareHardwareStatus = (ULONG)context->LastPrepareHardwareStatus;
+                output->LastSpbInitializeStatus = (ULONG)context->LastSpbInitializeStatus;
+                output->LastGpioInitializeStatus = (ULONG)context->LastGpioInitializeStatus;
+                output->TranslatedResourceCount = context->TranslatedResourceCount;
+                output->I2cResourceCount = context->I2cResourceCount;
+                output->GpioResourceCount = context->GpioResourceCount;
+                output->LastI2cConnectionIdLow = context->LastI2cConnectionIdLow;
+                output->LastI2cConnectionIdHigh = context->LastI2cConnectionIdHigh;
+                output->LastGpioConnectionIdLow = context->LastGpioConnectionIdLow;
+                output->LastGpioConnectionIdHigh = context->LastGpioConnectionIdHigh;
+                output->SpbCreateStatus = (ULONG)context->Spb.CreateStatus;
+                output->SpbLockStatus = (ULONG)context->Spb.LockStatus;
+                output->SpbOpenStatus = (ULONG)context->Spb.OpenStatus;
+                output->GpioCreateStatus = (ULONG)context->ResetGpio.CreateStatus;
+                output->GpioLockStatus = (ULONG)context->ResetGpio.LockStatus;
+                output->GpioOpenStatus = (ULONG)context->ResetGpio.OpenStatus;
+                output->SpbReady = context->Spb.Ready ? 1 : 0;
+                output->GpioReady = context->ResetGpio.Ready ? 1 : 0;
                 bytes = sizeof(*output);
             }
         }
