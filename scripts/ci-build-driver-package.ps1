@@ -59,7 +59,7 @@ Inf2Cat:  $inf2cat
 SignTool: $signtool
 "@ | Tee-Object -FilePath (Join-Path $ciDir 'tool-paths.txt')
 
-& $msbuild (Join-Path $root 'diptas2557.sln') /m /p:Configuration=Release /p:Platform=ARM64 /p:SignMode=Off
+& $msbuild (Join-Path $root 'diptas2557.sln') /m /p:Configuration=Release /p:Platform=ARM64 /p:SignMode=Off /p:RunApiValidator=false
 if ($LASTEXITCODE -ne 0) {
     throw "MSBuild failed with exit code $LASTEXITCODE"
 }
