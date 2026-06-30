@@ -77,6 +77,8 @@ typedef struct _DEVICE_CONTEXT {
     BOOLEAN AllowSpeakerPowerUp;
     BOOLEAN AllowI2cWrites;
     BOOLEAN ResetLevelAfterPulse;
+    BOOLEAN AllowResetReadbackBypass;
+    BOOLEAN ResetPulseActiveHigh;
     BOOLEAN I2cReady;
     BOOLEAN FirmwareLoaded;
     BOOLEAN Powered;
@@ -109,7 +111,7 @@ NTSTATUS GpioInitialize(_In_ WDFDEVICE Device, _Inout_ PGPIO_CONTEXT Gpio, _In_ 
 VOID GpioDeinitialize(_Inout_ PGPIO_CONTEXT Gpio);
 NTSTATUS GpioWritePin(_Inout_ PGPIO_CONTEXT Gpio, _In_ BOOLEAN High);
 NTSTATUS GpioReadPin(_Inout_ PGPIO_CONTEXT Gpio, _Out_ BOOLEAN* High);
-NTSTATUS GpioResetPulse(_Inout_ PGPIO_CONTEXT Gpio);
+NTSTATUS GpioResetPulse(_Inout_ PGPIO_CONTEXT Gpio, _In_ BOOLEAN ActiveHigh);
 
 NTSTATUS Tas2557Probe(_Inout_ PDEVICE_CONTEXT Context);
 NTSTATUS Tas2557SoftwareResetProbe(_Inout_ PDEVICE_CONTEXT Context);

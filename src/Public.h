@@ -44,6 +44,8 @@ typedef struct _DIPTAS2557_STATUS {
     BOOLEAN AllowSoftwareResetProbe;
     BOOLEAN ResetGpioReady;
     BOOLEAN ResetLevelAfterPulse;
+    BOOLEAN AllowResetReadbackBypass;
+    BOOLEAN ResetPulseActiveHigh;
     BOOLEAN I2cReady;
     BOOLEAN FirmwareLoaded;
     BOOLEAN AllowSpeakerPowerUp;

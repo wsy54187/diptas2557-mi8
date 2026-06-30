@@ -53,6 +53,8 @@ Diptas2557ReadSafetyGates(
     Context->AllowRawReadProbe = Diptas2557ReadBooleanDeviceValue(Device, L"AllowRawReadProbe");
     Context->AllowSpeakerPowerUp = Diptas2557ReadBooleanDeviceValue(Device, L"AllowSpeakerPowerUp");
     Context->AllowI2cWrites = Diptas2557ReadBooleanDeviceValue(Device, L"AllowI2cWrites");
+    Context->AllowResetReadbackBypass = Diptas2557ReadBooleanDeviceValue(Device, L"AllowResetReadbackBypass");
+    Context->ResetPulseActiveHigh = Diptas2557ReadBooleanDeviceValue(Device, L"ResetPulseActiveHigh");
 }
 
 NTSTATUS
@@ -164,7 +166,9 @@ Diptas2557EvtD0Entry(
     }
 
     if (context->AllowResetProbe) {
-        context->LastResetStatus = GpioResetPulse(&context->ResetGpio);
+        context->LastResetStatus = GpioResetPulse(
+            &context->ResetGpio,
+            context->ResetPulseActiveHigh);
         if (!NT_SUCCESS(context->LastResetStatus)) {
             context->I2cReady = FALSE;
             context->Powered = FALSE;
@@ -176,7 +180,7 @@ Diptas2557EvtD0Entry(
             &context->ResetGpio,
             &context->ResetLevelAfterPulse);
         if (!NT_SUCCESS(context->LastResetReadbackStatus) ||
-            !context->ResetLevelAfterPulse) {
+            (!context->ResetLevelAfterPulse && !context->AllowResetReadbackBypass)) {
             context->I2cReady = FALSE;
             context->Powered = FALSE;
             context->Muted = TRUE;
@@ -312,6 +316,8 @@ Diptas2557EvtIoDeviceControl(
                 output->AllowSoftwareResetProbe = context->AllowSoftwareResetProbe;
                 output->ResetGpioReady = context->ResetGpio.Ready;
                 output->ResetLevelAfterPulse = context->ResetLevelAfterPulse;
+                output->AllowResetReadbackBypass = context->AllowResetReadbackBypass;
+                output->ResetPulseActiveHigh = context->ResetPulseActiveHigh;
                 output->I2cReady = context->I2cReady;
                 output->FirmwareLoaded = context->FirmwareLoaded;
                 output->AllowSpeakerPowerUp = context->AllowSpeakerPowerUp;

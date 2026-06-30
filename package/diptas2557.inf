@@ -6,7 +6,7 @@ Signature="$WINDOWS NT$"
 Class=MEDIA
 ClassGuid={4d36e96c-e325-11ce-bfc1-08002be10318}
 Provider=%ProviderName%
-DriverVer=06/27/2026,0.1.13.0
+DriverVer=06/30/2026,0.1.14.0
 CatalogFile=diptas2557.cat
 PnpLockdown=1
 
@@ -54,6 +54,8 @@ HKR,,"AllowSplitReadProbe",0x00010001,0
 HKR,,"AllowRawReadProbe",0x00010001,0
 HKR,,"AllowSpeakerPowerUp",0x00010001,0
 HKR,,"AllowI2cWrites",0x00010001,0
+HKR,,"AllowResetReadbackBypass",0x00010001,0
+HKR,,"ResetPulseActiveHigh",0x00010001,0
 
 [Install.NT.Wdf]
 KmdfService=diptas2557,KmdfLibrary

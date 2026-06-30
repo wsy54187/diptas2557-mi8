@@ -118,37 +118,49 @@ try {
         $status.AllowI2cWrites = [bool]$out[68]
         $status.Powered = [bool]$out[69]
         $status.Muted = [bool]$out[70]
-        if ($bytes -ge 84) {
-            $status.LastAddressWriteStatus = ('0x{0:X8}' -f (Get-U32 $out 72))
-            $status.LastDataReadStatus = ('0x{0:X8}' -f (Get-U32 $out 76))
-            $status.AllowSplitReadProbe = [bool]$out[80]
-            if ($bytes -ge 92) {
-                $status.AllowRawReadProbe = [bool]$out[81]
-                $status.LastRawReadStatus = ('0x{0:X8}' -f (Get-U32 $out 84))
-                $status.LastRawReadValue = ('0x{0:X8}' -f (Get-U32 $out 88))
-                if ($bytes -ge 104) {
-                    $status.LastShutdownStatus = ('0x{0:X8}' -f (Get-U32 $out 92))
-                    $status.LastSafeStartupStatus = ('0x{0:X8}' -f (Get-U32 $out 96))
-                    $status.LastSafeUnmuteStatus = ('0x{0:X8}' -f (Get-U32 $out 100))
-                    if ($bytes -ge 176) {
-                        $status.LastPrepareHardwareStatus = ('0x{0:X8}' -f (Get-U32 $out 104))
-                        $status.LastSpbInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out 108))
-                        $status.LastGpioInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out 112))
-                        $status.TranslatedResourceCount = Get-U32 $out 116
-                        $status.I2cResourceCount = Get-U32 $out 120
-                        $status.GpioResourceCount = Get-U32 $out 124
-                        $status.LastI2cConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out 128))
-                        $status.LastI2cConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out 132))
-                        $status.LastGpioConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out 136))
-                        $status.LastGpioConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out 140))
-                        $status.SpbCreateStatus = ('0x{0:X8}' -f (Get-U32 $out 144))
-                        $status.SpbLockStatus = ('0x{0:X8}' -f (Get-U32 $out 148))
-                        $status.SpbOpenStatus = ('0x{0:X8}' -f (Get-U32 $out 152))
-                        $status.GpioCreateStatus = ('0x{0:X8}' -f (Get-U32 $out 156))
-                        $status.GpioLockStatus = ('0x{0:X8}' -f (Get-U32 $out 160))
-                        $status.GpioOpenStatus = ('0x{0:X8}' -f (Get-U32 $out 164))
-                        $status.SpbReady = [bool](Get-U32 $out 168)
-                        $status.GpioReady = [bool](Get-U32 $out 172)
+        $postBoolOffset = 72
+        if ($bytes -ge 180) {
+            $status.AllowResetReadbackBypass = [bool]$out[65]
+            $status.ResetPulseActiveHigh = [bool]$out[66]
+            $status.I2cReady = [bool]$out[67]
+            $status.FirmwareLoaded = [bool]$out[68]
+            $status.AllowSpeakerPowerUp = [bool]$out[69]
+            $status.AllowI2cWrites = [bool]$out[70]
+            $status.Powered = [bool]$out[71]
+            $status.Muted = [bool]$out[72]
+            $postBoolOffset = 76
+        }
+        if ($bytes -ge ($postBoolOffset + 12)) {
+            $status.LastAddressWriteStatus = ('0x{0:X8}' -f (Get-U32 $out $postBoolOffset))
+            $status.LastDataReadStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 4)))
+            $status.AllowSplitReadProbe = [bool]$out[$postBoolOffset + 8]
+            if ($bytes -ge ($postBoolOffset + 20)) {
+                $status.AllowRawReadProbe = [bool]$out[$postBoolOffset + 9]
+                $status.LastRawReadStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 12)))
+                $status.LastRawReadValue = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 16)))
+                if ($bytes -ge ($postBoolOffset + 32)) {
+                    $status.LastShutdownStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 20)))
+                    $status.LastSafeStartupStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 24)))
+                    $status.LastSafeUnmuteStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 28)))
+                    if ($bytes -ge ($postBoolOffset + 104)) {
+                        $status.LastPrepareHardwareStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 32)))
+                        $status.LastSpbInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 36)))
+                        $status.LastGpioInitializeStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 40)))
+                        $status.TranslatedResourceCount = Get-U32 $out ($postBoolOffset + 44)
+                        $status.I2cResourceCount = Get-U32 $out ($postBoolOffset + 48)
+                        $status.GpioResourceCount = Get-U32 $out ($postBoolOffset + 52)
+                        $status.LastI2cConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 56)))
+                        $status.LastI2cConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 60)))
+                        $status.LastGpioConnectionIdLow = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 64)))
+                        $status.LastGpioConnectionIdHigh = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 68)))
+                        $status.SpbCreateStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 72)))
+                        $status.SpbLockStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 76)))
+                        $status.SpbOpenStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 80)))
+                        $status.GpioCreateStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 84)))
+                        $status.GpioLockStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 88)))
+                        $status.GpioOpenStatus = ('0x{0:X8}' -f (Get-U32 $out ($postBoolOffset + 92)))
+                        $status.SpbReady = [bool](Get-U32 $out ($postBoolOffset + 96))
+                        $status.GpioReady = [bool](Get-U32 $out ($postBoolOffset + 100))
                     }
                 }
             }

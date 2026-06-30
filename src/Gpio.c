@@ -152,13 +152,16 @@ GpioReadPin(
 
 NTSTATUS
 GpioResetPulse(
-    _Inout_ PGPIO_CONTEXT Gpio
+    _Inout_ PGPIO_CONTEXT Gpio,
+    _In_ BOOLEAN ActiveHigh
     )
 {
     NTSTATUS status;
     LARGE_INTEGER interval;
+    BOOLEAN assertLevel = ActiveHigh ? TRUE : FALSE;
+    BOOLEAN releaseLevel = ActiveHigh ? FALSE : TRUE;
 
-    status = GpioWritePin(Gpio, FALSE);
+    status = GpioWritePin(Gpio, assertLevel);
     if (!NT_SUCCESS(status)) {
         return status;
     }
@@ -166,7 +169,7 @@ GpioResetPulse(
     interval.QuadPart = -10 * 5000;
     KeDelayExecutionThread(KernelMode, FALSE, &interval);
 
-    status = GpioWritePin(Gpio, TRUE);
+    status = GpioWritePin(Gpio, releaseLevel);
     if (!NT_SUCCESS(status)) {
         return status;
     }
